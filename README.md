@@ -833,7 +833,7 @@ The following is the sample terminal output when running example [ISR_16_PWMs_Ar
 
 ```
 Starting ISR_16_PWMs_Array_Complex on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.0.0
+MBED_RP2040_Slow_PWM v1.0.1
 [PWM] MBED_RP2040_TimerInterrupt: _timerNo = 0 , _fre = 1000000.00
 [PWM] _count = 0 - 20
 [PWM] hardware_alarm_set_target, uS = 20
@@ -899,7 +899,7 @@ The following is the sample terminal output when running example [**ISR_16_PWMs_
 
 ```
 Starting ISR_16_PWMs_Array on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.0.0
+MBED_RP2040_Slow_PWM v1.0.1
 [PWM] MBED_RP2040_TimerInterrupt: _timerNo = 0 , _fre = 1000000.00
 [PWM] _count = 0 - 20
 [PWM] hardware_alarm_set_target, uS = 20
@@ -930,7 +930,7 @@ The following is the sample terminal output when running example [**ISR_16_PWMs_
 
 ```
 Starting ISR_16_PWMs_Array_Simple on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.0.0
+MBED_RP2040_Slow_PWM v1.0.1
 [PWM] MBED_RP2040_TimerInterrupt: _timerNo = 0 , _fre = 1000000.00
 [PWM] _count = 0 - 20
 [PWM] hardware_alarm_set_target, uS = 20
