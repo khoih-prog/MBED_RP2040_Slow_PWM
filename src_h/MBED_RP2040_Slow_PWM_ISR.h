@@ -128,7 +128,7 @@ class MBED_RP2040_Slow_PWM_ISR
     {
       uint32_t period = 0;
       
-      if ( ( frequency > 0 ) && ( frequency <= 500 ) )
+      if ( ( frequency > 0 ) && ( frequency <= 1000 ) )
       {
 #if USING_MICROS_RESOLUTION
       // period in us
@@ -140,7 +140,7 @@ class MBED_RP2040_Slow_PWM_ISR
       }
       else
       {       
-        PWM_LOGERROR("Error: Invalid frequency, max is 500Hz");
+        PWM_LOGERROR("Error: Invalid frequency, max is 1000Hz");
         return false;
       }
       
