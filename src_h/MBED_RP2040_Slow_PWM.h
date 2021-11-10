@@ -12,12 +12,13 @@
   Therefore, their executions are not blocked by bad-behaving functions / tasks.
   This important feature is absolutely necessary for mission-critical tasks.
 
-  Version: 1.0.1
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K.Hoang      22/09/2021 Initial coding for RP2040-based boards using Arduino-mbed mbed_nano or mbed_rp2040 core
   1.0.1   K Hoang      22/10/2021 Fix platform in library.json for PIO
+  1.1.0   K Hoang      10/11/2021 Add functions to modify PWM settings on-the-fly
 *****************************************************************************************************************************/
 
 #pragma once
@@ -33,7 +34,7 @@
 #endif
 
 #ifndef MBED_RP2040_SLOW_PWM_VERSION
-  #define MBED_RP2040_SLOW_PWM_VERSION       "MBED_RP2040_Slow_PWM v1.0.1"
+  #define MBED_RP2040_SLOW_PWM_VERSION       "MBED_RP2040_Slow_PWM v1.1.0"
 #endif
 
 #ifndef _PWM_LOGLEVEL_

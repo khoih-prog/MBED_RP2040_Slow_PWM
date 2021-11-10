@@ -12,18 +12,16 @@
   Therefore, their executions are not blocked by bad-behaving functions / tasks.
   This important feature is absolutely necessary for mission-critical tasks.
 
-  Version: 1.0.1
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K.Hoang      22/09/2021 Initial coding for RP2040-based boards using Arduino-mbed mbed_nano or mbed_rp2040 core
   1.0.1   K Hoang      22/10/2021 Fix platform in library.json for PIO
+  1.1.0   K Hoang      10/11/2021 Add functions to modify PWM settings on-the-fly
 *****************************************************************************************************************************/
 
-
 #include <string.h>
-
-#include "MBED_RP2040_Slow_ISR.h"
 
 /////////////////////////////////////////////////// 
 
@@ -168,6 +166,8 @@ int MBED_RP2040_Slow_PWM_ISR::setupPWMChannel(uint32_t pin, uint32_t period, uin
   digitalWrite(pin, HIGH);
   PWM[channelNum].pinHigh       = true;
   
+  PWM[channelNum].prevTime      = timeNow();
+  
   PWM[channelNum].callbackStart = cbStartFunc;
   PWM[channelNum].callbackStop  = cbStopFunc;
   
@@ -180,6 +180,44 @@ int MBED_RP2040_Slow_PWM_ISR::setupPWMChannel(uint32_t pin, uint32_t period, uin
   
   return channelNum;
 }
+
+///////////////////////////////////////////////////
+
+bool MBED_RP2040_Slow_PWM_ISR::modifyPWMChannel_Period(unsigned channelNum, uint32_t pin, uint32_t period, uint32_t dutycycle)
+{
+  // Invalid input, such as period = 0, etc
+  if ( (period == 0) || (dutycycle > 100) )
+  {
+    PWM_LOGERROR("Error: Invalid period or dutycycle");
+    return false;
+  }
+
+  if (channelNum > MAX_NUMBER_CHANNELS) 
+  {
+    PWM_LOGERROR("Error: channelNum > MAX_NUMBER_CHANNELS");
+    return false;
+  }
+  
+  if (PWM[channelNum].pin != pin) 
+  {
+    PWM_LOGERROR("Error: channelNum and pin mismatched");
+    return false;
+  }
+   
+  PWM[channelNum].period        = period;
+  PWM[channelNum].onTime        = ( period * dutycycle ) / 100;
+  
+  digitalWrite(pin, HIGH);
+  PWM[channelNum].pinHigh       = true;
+  
+  PWM[channelNum].prevTime      = timeNow();
+     
+  PWM_LOGDEBUG0("Channel : "); PWM_LOGDEBUG0(channelNum); PWM_LOGDEBUG0("\tPeriod : "); PWM_LOGDEBUG0(PWM[channelNum].period);
+  PWM_LOGDEBUG0("\t\tOnTime : "); PWM_LOGDEBUG0(PWM[channelNum].onTime); PWM_LOGDEBUG0("\tStart_Time : "); PWM_LOGDEBUGLN0(PWM[channelNum].prevTime);
+  
+  return true;
+}
+
 
 ///////////////////////////////////////////////////
 
