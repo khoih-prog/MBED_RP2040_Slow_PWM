@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-  MBED_RP2040_Slow_PWM.h
+  MBED_RP2040_Slow_PWM_Impl.h
   For MBED RP2040-based boards
   Written by Khoi Hoang
 
@@ -24,13 +24,19 @@
 
 #pragma once
 
-#ifndef MBED_RP2040_SLOW_PWM_H
-#define MBED_RP2040_SLOW_PWM_H
+#ifndef MBED_RP2040_SLOW_PWM_IMPL_H
+#define MBED_RP2040_SLOW_PWM_IMPL_H
 
-#include "MBED_RP2040_Slow_PWM.hpp"
-#include "MBED_RP2040_Slow_PWM_Impl.h"
+void TIMER_ISR_START(uint alarm_num)
+{  
+  absAlarmTime[alarm_num]._private_us_since_boot = time_us_64() + _timerCount[alarm_num];                
+  hardware_alarm_set_target(alarm_num, absAlarmTime[alarm_num]);
+}
 
-#include "MBED_RP2040_Slow_PWM_ISR.h"
+void TIMER_ISR_END(uint alarm_num)
+{
+}
 
-#endif    // MBED_RP2040_SLOW_PWM_H
+
+#endif    // MBED_RP2040_SLOW_PWM_IMPL_H
 
