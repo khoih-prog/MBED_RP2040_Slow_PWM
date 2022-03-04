@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Releases v1.2.1](#releases-v121)
   * [Releases v1.2.0](#releases-v120)
   * [Releases v1.1.0](#releases-v110)
   * [Releases v1.0.1](#Releases-v101)
@@ -21,6 +22,12 @@
 ---
 
 ## Changelog
+
+### Releases v1.2.1
+
+1. Fix `New Period` display bug. Check [random dropouts #4](https://github.com/khoih-prog/SAMD_Slow_PWM/issues/4)
+2. Display informational warning only when `_PWM_LOGLEVEL_` > 3
+3. Update examples
 
 ### Releases v1.2.0
 

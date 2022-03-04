@@ -12,7 +12,7 @@
   Therefore, their executions are not blocked by bad-behaving functions / tasks.
   This important feature is absolutely necessary for mission-critical tasks.
 
-  Version: 1.2.0
+  Version: 1.2.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -20,6 +20,7 @@
   1.0.1   K Hoang      22/10/2021 Fix platform in library.json for PIO
   1.1.0   K Hoang      10/11/2021 Add functions to modify PWM settings on-the-fly
   1.2.0   K Hoang      02/02/2022 Fix multiple-definitions linker error. Improve accuracy. Optimize code
+  1.2.1   K Hoang      03/03/2022 Fix `DutyCycle` and `New Period` display bugs. Display warning only when debug level > 3
 *****************************************************************************************************************************/
 
 #pragma once
@@ -29,19 +30,23 @@
 
 #if ( defined(ARDUINO_NANO_RP2040_CONNECT) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || \
       defined(ARDUINO_GENERIC_RP2040) ) && defined(ARDUINO_ARCH_MBED)
-  #warning Using MBED RASPBERRY_PI_PICO platform
+      
+  #if (_PWM_LOGLEVEL_ > 3)
+    #warning Using MBED RASPBERRY_PI_PICO platform
+  #endif
+  
 #else
   #error This code is intended to run on the MBED RASPBERRY_PI_PICO platform! Please check your Tools->Board setting.
 #endif
 
 #ifndef MBED_RP2040_SLOW_PWM_VERSION
-  #define MBED_RP2040_SLOW_PWM_VERSION           "MBED_RP2040_Slow_PWM v1.2.0"
+  #define MBED_RP2040_SLOW_PWM_VERSION           "MBED_RP2040_Slow_PWM v1.2.1"
   
   #define MBED_RP2040_SLOW_PWM_VERSION_MAJOR     1
   #define MBED_RP2040_SLOW_PWM_VERSION_MINOR     2
-  #define MBED_RP2040_SLOW_PWM_VERSION_PATCH     0
+  #define MBED_RP2040_SLOW_PWM_VERSION_PATCH     1
 
-  #define MBED_RP2040_SLOW_PWM_VERSION_INT       1002000
+  #define MBED_RP2040_SLOW_PWM_VERSION_INT       1002001
 #endif
 
 #if defined(ARDUINO)
@@ -76,12 +81,19 @@ typedef void (*timer_callback)();
 typedef void (*timer_callback_p)(void *);
 
 #if !defined(USING_MICROS_RESOLUTION)
-  #warning Not USING_MICROS_RESOLUTION, using millis resolution
+
+  #if (_PWM_LOGLEVEL_ > 3)
+    #warning Not USING_MICROS_RESOLUTION, using millis resolution
+  #endif
+    
   #define USING_MICROS_RESOLUTION       false
 #endif
 
 #if !defined(CHANGING_PWM_END_OF_CYCLE)
-  #warning Using default CHANGING_PWM_END_OF_CYCLE == true
+  #if (_PWM_LOGLEVEL_ > 3)
+    #warning Using default CHANGING_PWM_END_OF_CYCLE == true
+  #endif
+  
   #define CHANGING_PWM_END_OF_CYCLE     true
 #endif
 
