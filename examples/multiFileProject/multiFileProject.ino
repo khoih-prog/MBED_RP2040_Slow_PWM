@@ -15,8 +15,8 @@
   #error This code is intended to run on the MBED RP2040 mbed_nano or mbed_rp2040 platform! Please check your Tools->Board setting.
 #endif
 
-#define MBED_RP2040_SLOW_PWM_VERSION_MIN_TARGET      "RP2040_Slow_PWM v1.2.1"
-#define MBED_RP2040_SLOW_PWM_VERSION_MIN             1002001
+#define MBED_RP2040_SLOW_PWM_VERSION_MIN_TARGET      "RP2040_Slow_PWM v1.3.0"
+#define MBED_RP2040_SLOW_PWM_VERSION_MIN             1003000
 
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include "MBED_RP2040_Slow_PWM.h"
