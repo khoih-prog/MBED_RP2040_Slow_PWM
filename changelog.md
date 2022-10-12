@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Releases v1.3.0](#releases-v130)
   * [Releases v1.2.1](#releases-v121)
   * [Releases v1.2.0](#releases-v120)
   * [Releases v1.1.0](#releases-v110)
@@ -22,6 +23,10 @@
 ---
 
 ## Changelog
+
+### Releases v1.3.0
+
+1. Fix `poor-timer-accuracy` bug. Check [Poor accuracy on timer interrupt frequency or interval. #4](https://github.com/khoih-prog/MBED_RPI_PICO_TimerInterrupt/issues/4)
 
 ### Releases v1.2.1
 

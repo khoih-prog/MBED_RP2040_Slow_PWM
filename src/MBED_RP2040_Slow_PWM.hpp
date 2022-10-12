@@ -12,7 +12,7 @@
   Therefore, their executions are not blocked by bad-behaving functions / tasks.
   This important feature is absolutely necessary for mission-critical tasks.
 
-  Version: 1.2.1
+  Version: 1.3.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -21,12 +21,15 @@
   1.1.0   K Hoang      10/11/2021 Add functions to modify PWM settings on-the-fly
   1.2.0   K Hoang      02/02/2022 Fix multiple-definitions linker error. Improve accuracy. Optimize code
   1.2.1   K Hoang      03/03/2022 Fix `DutyCycle` and `New Period` display bugs. Display warning only when debug level > 3
+  1.3.0   K.Hoang      12/10/2022 Fix poor timer accuracy bug
 *****************************************************************************************************************************/
 
 #pragma once
 
 #ifndef MBED_RP2040_SLOW_PWM_HPP
 #define MBED_RP2040_SLOW_PWM_HPP
+
+////////////////////////////////////////////
 
 #if ( defined(ARDUINO_NANO_RP2040_CONNECT) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || \
       defined(ARDUINO_GENERIC_RP2040) ) && defined(ARDUINO_ARCH_MBED)
@@ -39,15 +42,19 @@
   #error This code is intended to run on the MBED RASPBERRY_PI_PICO platform! Please check your Tools->Board setting.
 #endif
 
+////////////////////////////////////////////
+
 #ifndef MBED_RP2040_SLOW_PWM_VERSION
-  #define MBED_RP2040_SLOW_PWM_VERSION           "MBED_RP2040_Slow_PWM v1.2.1"
+  #define MBED_RP2040_SLOW_PWM_VERSION           "MBED_RP2040_Slow_PWM v1.3.0"
   
   #define MBED_RP2040_SLOW_PWM_VERSION_MAJOR     1
-  #define MBED_RP2040_SLOW_PWM_VERSION_MINOR     2
-  #define MBED_RP2040_SLOW_PWM_VERSION_PATCH     1
+  #define MBED_RP2040_SLOW_PWM_VERSION_MINOR     3
+  #define MBED_RP2040_SLOW_PWM_VERSION_PATCH     0
 
-  #define MBED_RP2040_SLOW_PWM_VERSION_INT       1002001
+  #define MBED_RP2040_SLOW_PWM_VERSION_INT       1003000
 #endif
+
+////////////////////////////////////////////
 
 #if defined(ARDUINO)
   #if ARDUINO >= 100
@@ -57,9 +64,13 @@
   #endif
 #endif
 
+////////////////////////////////////////////
+
 #ifndef _PWM_LOGLEVEL_
   #define _PWM_LOGLEVEL_      1
 #endif
+
+////////////////////////////////////////////
 
 #include "PWM_Generic_Debug.h"
 
@@ -93,6 +104,8 @@ void TIMER_ISR_END(uint alarm_num);
 class MBED_RP2040_TimerInterrupt;
 
 typedef MBED_RP2040_TimerInterrupt MBED_RP2040_Timer;
+
+////////////////////////////////////////////
    
 class MBED_RP2040_TimerInterrupt
 {
@@ -104,13 +117,19 @@ class MBED_RP2040_TimerInterrupt
         
   public:
 
+    ////////////////////////////////////////////
+
     MBED_RP2040_TimerInterrupt(uint8_t timerNo)
     {     
       _timerNo = timerNo;
       _callback = NULL;
     };
+
+    ////////////////////////////////////////////
     
     #define TIM_CLOCK_FREQ      ( (float) 1000000.0f )
+
+    ////////////////////////////////////////////
 
     // frequency (in hertz) and duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     // No params and duration now. To be added in the future by adding similar functions here
@@ -127,10 +146,13 @@ class MBED_RP2040_TimerInterrupt
         
         // Hardware timer is preset in RP2040 at 1MHz / 1uS
         _frequency  = frequency;
-        _timerCount[_timerNo] = (uint64_t) TIM_CLOCK_FREQ / frequency;
+        
+        //_timerCount[_timerNo] = (uint64_t) TIM_CLOCK_FREQ / frequency;
+        // Ref: https://github.com/khoih-prog/MBED_RPI_PICO_TimerInterrupt/issues/4
+        _timerCount[_timerNo] = (uint64_t) ( ( float) TIM_CLOCK_FREQ / frequency ) - 1;
         
         PWM_LOGWARN5(F("_timerNo = "), _timerNo, F(", Clock (Hz) = "), TIM_CLOCK_FREQ, F(", _fre (Hz) = "), _frequency);
-        PWM_LOGWARN3(F("_count = "), (uint32_t) (_timerCount[_timerNo] >> 32) , F("-"), (uint32_t) (_timerCount[_timerNo]));
+        PWM_LOGWARN3(F("_count = "), (uint32_t) (_timerCount[_timerNo] >> 32) , F("-"), (uint32_t) (_timerCount[_timerNo]) + 1);
         
         _callback  =  callback;
          
@@ -143,7 +165,7 @@ class MBED_RP2040_TimerInterrupt
         //bool hardware_alarm_set_target(uint alarm_num, absolute_time_t t);
         hardware_alarm_set_target(_timerNo, absAlarmTime[_timerNo]);
          
-        PWM_LOGWARN1(F("hardware_alarm_set_target, uS = "), _timerCount[_timerNo]);
+        PWM_LOGWARN1(F("hardware_alarm_set_target, uS = "), _timerCount[_timerNo] + 1);
 
         return true;
       }
@@ -157,6 +179,8 @@ class MBED_RP2040_TimerInterrupt
       TIMER_ISR_END(_timerNo);
     }
 
+    ////////////////////////////////////////////
+
     // interval (in microseconds) and duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     // No params and duration now. To be added in the future by adding similar functions here
     bool setInterval(const unsigned long& interval, hardware_alarm_callback_t callback)
@@ -164,10 +188,14 @@ class MBED_RP2040_TimerInterrupt
       return setFrequency((float) (1000000.0f / interval), callback);
     }
 
+    ////////////////////////////////////////////
+
     bool attachInterrupt(const float& frequency, hardware_alarm_callback_t callback)
     {
       return setFrequency(frequency, callback);
     }
+
+    ////////////////////////////////////////////
 
     // interval (in microseconds) and duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     // No params and duration now. To be added in the future by adding similar functions here
@@ -176,15 +204,21 @@ class MBED_RP2040_TimerInterrupt
       return setFrequency( (float) ( 1000000.0f / interval), callback);
     }
 
+    ////////////////////////////////////////////
+
     void detachInterrupt()
     {
       hardware_alarm_set_callback(_timerNo, NULL);
     }
 
+    ////////////////////////////////////////////
+
     void disableTimer()
     {
       hardware_alarm_set_callback(_timerNo, NULL);
     }
+
+    ////////////////////////////////////////////
 
     // Duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     void reattachInterrupt()
@@ -193,6 +227,8 @@ class MBED_RP2040_TimerInterrupt
       hardware_alarm_set_callback(_timerNo, _callback);
     }
 
+    ////////////////////////////////////////////
+
     // Duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     void enableTimer()
     {
@@ -200,11 +236,15 @@ class MBED_RP2040_TimerInterrupt
       hardware_alarm_set_callback(_timerNo, _callback);
     }
 
+    ////////////////////////////////////////////
+
     // Just stop clock source, clear the count
     void stopTimer()
     {
       hardware_alarm_set_callback(_timerNo, NULL);
     }
+
+    ////////////////////////////////////////////
 
     // Just reconnect clock source, start current count from 0
     void restartTimer()
@@ -213,10 +253,15 @@ class MBED_RP2040_TimerInterrupt
       hardware_alarm_set_callback(_timerNo, _callback);
     }
 
+    ////////////////////////////////////////////
+
     int8_t getTimer() __attribute__((always_inline))
     {
       return _timerNo;
     }
+
+    ////////////////////////////////////////////
+    
 }; // class MBED_RP2040_TimerInterrupt
 
 

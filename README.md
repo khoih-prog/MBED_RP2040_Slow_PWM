@@ -2,7 +2,7 @@
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/MBED_RP2040_Slow_PWM.svg?)](https://www.ardu-badge.com/MBED_RP2040_Slow_PWM)
 [![GitHub release](https://img.shields.io/github/release/khoih-prog/MBED_RP2040_Slow_PWM.svg)](https://github.com/khoih-prog/MBED_RP2040_Slow_PWM/releases)
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/khoih-prog/MBED_RP2040_Slow_PWM/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/khoih-prog/MBED_RP2040_Slow_PWM/blob/main/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/MBED_RP2040_Slow_PWM.svg)](http://github.com/khoih-prog/MBED_RP2040_Slow_PWM/issues)
 
@@ -67,7 +67,7 @@ As more complex calculation and check **inside ISR** are introduced from v1.2.0,
 You can modify to use larger `HW_TIMER_INTERVAL_US`, (from current 20uS), according to your board and use-case if crash happens.
 
 
-```
+```cpp
 // Current 20uS
 #define HW_TIMER_INTERVAL_US      20L
 ```
@@ -139,11 +139,10 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 ## Prerequisites
 
- 1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
- 2. [`ArduinoCore-mbed mbed_nano or mbed_rp2040 core 2.7.2+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino **RP2040-based** boards, such as **Nano_RP2040_Connect, RaspberryPi Pico, etc.**. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
-
- 3. To use with certain example
-   - [`SimpleTimer library`](https://github.com/jfturcot/SimpleTimer) to use with some examples.
+1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
+2. [`Arduino mbed_rp2040 core 3.3.0+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as **Arduino Nano RP2040 Connect, RASPBERRY_PI_PICO, etc.**. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+3. To use with certain example
+   - [`SimpleTimer library`](https://github.com/jfturcot/SimpleTimer) for [ISR_Timers_Array_Simple](examples/ISR_Timers_Array_Simple) and [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) examples.
    
    
 ---
@@ -161,9 +160,9 @@ You can also use this link [![arduino-library-badge](https://www.ardu-badge.com/
 Another way to install is to:
 
 1. Navigate to [**MBED_RP2040_Slow_PWM**](https://github.com/khoih-prog/MBED_RP2040_Slow_PWM) page.
-2. Download the latest release `MBED_RP2040_Slow_PWM-master.zip`.
-3. Extract the zip file to `MBED_RP2040_Slow_PWM-master` directory 
-4. Copy whole `MBED_RP2040_Slow_PWM-master` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
+2. Download the latest release `MBED_RP2040_Slow_PWM-main.zip`.
+3. Extract the zip file to `MBED_RP2040_Slow_PWM-main` directory 
+4. Copy whole `MBED_RP2040_Slow_PWM-main` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
 
 ### VS Code & PlatformIO
 
@@ -182,14 +181,14 @@ The current library implementation, using `xyz-Impl.h` instead of standard `xyz.
 
 You can include this `.hpp` file
 
-```
+```cpp
 // Can be included as many times as necessary, without `Multiple Definitions` Linker Error
 #include "MBED_RP2040_Slow_PWM.hpp"     //https://github.com/khoih-prog/MBED_RP2040_Slow_PWM
 ```
 
 in many files. But be sure to use the following `.h` file **in just 1 `.h`, `.cpp` or `.ino` file**, which must **not be included in any other file**, to avoid `Multiple Definitions` Linker Error
 
-```
+```cpp
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include "MBED_RP2040_Slow_PWM.h"           //https://github.com/khoih-prog/MBED_RP2040_Slow_PWM
 ```
@@ -197,7 +196,6 @@ in many files. But be sure to use the following `.h` file **in just 1 `.h`, `.cp
 Check the new [**multiFileProject** example](examples/multiFileProject) for a `HOWTO` demo.
 
 Have a look at the discussion in [Different behaviour using the src_cpp or src_h lib #80](https://github.com/khoih-prog/ESPAsync_WiFiManager/discussions/80)
-
 
 
 ---
@@ -233,7 +231,7 @@ Before using any Timer, you have to make sure the Timer has not been used by any
 
 #### 1. Init Hardware Timer
 
-```
+```cpp
 // Init MBED_RPI_PICO_Timer
 MBED_RP2040_Timer ITimer(0);;
 
@@ -243,7 +241,7 @@ MBED_RP2040_Slow_PWM ISR_PWM;
 
 #### 2. Set PWM Frequency, dutycycle, attach irqCallbackStartFunc and irqCallbackStopFunc functions
 
-```
+```cpp
 void irqCallbackStartFunc()
 {
 
@@ -297,61 +295,78 @@ The following is the sample terminal output when running example [ISR_16_PWMs_Ar
 
 ```
 Starting ISR_16_PWMs_Array_Complex on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.2.1
+MBED_RP2040_Slow_PWM v1.3.0
 [PWM] _timerNo =  0 , Clock (Hz) =  1000000.00 , _fre (Hz) =  50000.00
 [PWM] _count =  0 - 20
 [PWM] hardware_alarm_set_target, uS =  20
-Starting ITimer OK, micros() = 3234569
-Channel : 0	    Period : 1000000		OnTime : 50000	Start_Time : 3235870
-Channel : 1	    Period : 500000		OnTime : 50000	Start_Time : 3237300
-Channel : 2	    Period : 333333		OnTime : 66666	Start_Time : 3238636
-Channel : 3	    Period : 250000		OnTime : 75000	Start_Time : 3240015
-Channel : 4	    Period : 200000		OnTime : 80000	Start_Time : 3241343
-Channel : 5	    Period : 166666		OnTime : 74999	Start_Time : 3242770
-Channel : 6	    Period : 142857		OnTime : 71428	Start_Time : 3244067
-Channel : 7	    Period : 125000		OnTime : 68750	Start_Time : 3245346
-Channel : 8	    Period : 111111		OnTime : 66666	Start_Time : 3246824
-Channel : 9	    Period : 100000		OnTime : 65000	Start_Time : 3248269
-Channel : 10	    Period : 66666		OnTime : 46666	Start_Time : 3249679
-Channel : 11	    Period : 50000		OnTime : 37500	Start_Time : 3251024
-Channel : 12	    Period : 40000		OnTime : 32000	Start_Time : 3252393
-Channel : 13	    Period : 33333		OnTime : 28333	Start_Time : 3253897
-Channel : 14	    Period : 25000		OnTime : 22500	Start_Time : 3255349
-Channel : 15	    Period : 20000		OnTime : 19000	Start_Time : 3256972
-SimpleTimer (ms): 2000, us : 12858291, Dus : 9623020
+Starting ITimer OK, micros() = 3320077
+Channel : 0	    Period : 1000000		OnTime : 50000	Start_Time : 3321325
+Channel : 1	    Period : 500000		OnTime : 50000	Start_Time : 3322698
+Channel : 2	    Period : 333333		OnTime : 66666	Start_Time : 3323943
+Channel : 3	    Period : 250000		OnTime : 75000	Start_Time : 3325097
+Channel : 4	    Period : 200000		OnTime : 80000	Start_Time : 3326457
+Channel : 5	    Period : 166666		OnTime : 74999	Start_Time : 3327632
+Channel : 6	    Period : 142857		OnTime : 71428	Start_Time : 3328874
+Channel : 7	    Period : 125000		OnTime : 68750	Start_Time : 3330002
+Channel : 8	    Period : 111111		OnTime : 66666	Start_Time : 3331139
+Channel : 9	    Period : 100000		OnTime : 65000	Start_Time : 3332396
+Channel : 10	    Period : 66666		OnTime : 46666	Start_Time : 3333625
+Channel : 11	    Period : 50000		OnTime : 37500	Start_Time : 3334912
+Channel : 12	    Period : 40000		OnTime : 32000	Start_Time : 3336165
+Channel : 13	    Period : 33333		OnTime : 28333	Start_Time : 3337497
+Channel : 14	    Period : 25000		OnTime : 22500	Start_Time : 3338945
+Channel : 15	    Period : 20000		OnTime : 19000	Start_Time : 3340266
+SimpleTimer (ms): 2000, us : 13341250, Dus : 10020493
+PWM Channel : 0, programmed Period (us): 1000000.00, actual : 1000000, programmed DutyCycle : 5.00, actual : 5.00
+PWM Channel : 1, programmed Period (us): 500000.00, actual : 499999, programmed DutyCycle : 10.00, actual : 10.00
+PWM Channel : 2, programmed Period (us): 333333.34, actual : 333339, programmed DutyCycle : 20.00, actual : 20.00
+PWM Channel : 3, programmed Period (us): 250000.00, actual : 250000, programmed DutyCycle : 30.00, actual : 30.00
+PWM Channel : 4, programmed Period (us): 200000.00, actual : 200000, programmed DutyCycle : 40.00, actual : 40.00
+PWM Channel : 5, programmed Period (us): 166666.67, actual : 166680, programmed DutyCycle : 45.00, actual : 44.99
+PWM Channel : 6, programmed Period (us): 142857.14, actual : 142859, programmed DutyCycle : 50.00, actual : 49.99
+PWM Channel : 7, programmed Period (us): 125000.00, actual : 124999, programmed DutyCycle : 55.00, actual : 54.99
+PWM Channel : 8, programmed Period (us): 111111.11, actual : 111120, programmed DutyCycle : 60.00, actual : 59.99
+PWM Channel : 9, programmed Period (us): 100000.00, actual : 100000, programmed DutyCycle : 65.00, actual : 65.00
+PWM Channel : 10, programmed Period (us): 66666.66, actual : 66680, programmed DutyCycle : 70.00, actual : 69.98
+PWM Channel : 11, programmed Period (us): 50000.00, actual : 49999, programmed DutyCycle : 75.00, actual : 75.00
+PWM Channel : 12, programmed Period (us): 40000.00, actual : 39999, programmed DutyCycle : 80.00, actual : 79.97
+PWM Channel : 13, programmed Period (us): 33333.33, actual : 33340, programmed DutyCycle : 85.00, actual : 84.98
+PWM Channel : 14, programmed Period (us): 25000.00, actual : 25012, programmed DutyCycle : 90.00, actual : 89.93
+PWM Channel : 15, programmed Period (us): 20000.00, actual : 20034, programmed DutyCycle : 95.00, actual : 94.76
+SimpleTimer (ms): 2000, us : 23380221, Dus : 10038971
+PWM Channel : 0, programmed Period (us): 1000000.00, actual : 1000002, programmed DutyCycle : 5.00, actual : 5.00
+PWM Channel : 1, programmed Period (us): 500000.00, actual : 500001, programmed DutyCycle : 10.00, actual : 10.00
+PWM Channel : 2, programmed Period (us): 333333.34, actual : 333340, programmed DutyCycle : 20.00, actual : 20.00
+PWM Channel : 3, programmed Period (us): 250000.00, actual : 250001, programmed DutyCycle : 30.00, actual : 29.99
+PWM Channel : 4, programmed Period (us): 200000.00, actual : 200001, programmed DutyCycle : 40.00, actual : 39.99
+PWM Channel : 5, programmed Period (us): 166666.67, actual : 166680, programmed DutyCycle : 45.00, actual : 44.98
+PWM Channel : 6, programmed Period (us): 142857.14, actual : 142860, programmed DutyCycle : 50.00, actual : 49.99
+PWM Channel : 7, programmed Period (us): 125000.00, actual : 125001, programmed DutyCycle : 55.00, actual : 55.00
+PWM Channel : 8, programmed Period (us): 111111.11, actual : 111120, programmed DutyCycle : 60.00, actual : 59.99
+PWM Channel : 9, programmed Period (us): 100000.00, actual : 99999, programmed DutyCycle : 65.00, actual : 64.99
+PWM Channel : 10, programmed Period (us): 66666.66, actual : 66670, programmed DutyCycle : 70.00, actual : 69.99
+PWM Channel : 11, programmed Period (us): 50000.00, actual : 50029, programmed DutyCycle : 75.00, actual : 74.96
+PWM Channel : 12, programmed Period (us): 40000.00, actual : 40001, programmed DutyCycle : 80.00, actual : 80.02
+PWM Channel : 13, programmed Period (us): 33333.33, actual : 33341, programmed DutyCycle : 85.00, actual : 84.98
+PWM Channel : 14, programmed Period (us): 25000.00, actual : 25009, programmed DutyCycle : 90.00, actual : 89.90
+PWM Channel : 15, programmed Period (us): 20000.00, actual : 19994, programmed DutyCycle : 95.00, actual : 94.93
+SimpleTimer (ms): 2000, us : 33419214, Dus : 10038993
 PWM Channel : 0, programmed Period (us): 1000000.00, actual : 1000001, programmed DutyCycle : 5.00, actual : 5.00
-PWM Channel : 1, programmed Period (us): 500000.00, actual : 500010, programmed DutyCycle : 10.00, actual : 10.00
-PWM Channel : 2, programmed Period (us): 333333.34, actual : 333334, programmed DutyCycle : 20.00, actual : 20.00
-PWM Channel : 3, programmed Period (us): 250000.00, actual : 250005, programmed DutyCycle : 30.00, actual : 30.00
-PWM Channel : 4, programmed Period (us): 200000.00, actual : 200004, programmed DutyCycle : 40.00, actual : 39.99
-PWM Channel : 5, programmed Period (us): 166666.67, actual : 166677, programmed DutyCycle : 45.00, actual : 44.99
-PWM Channel : 6, programmed Period (us): 142857.14, actual : 142862, programmed DutyCycle : 50.00, actual : 49.99
-PWM Channel : 7, programmed Period (us): 125000.00, actual : 125032, programmed DutyCycle : 55.00, actual : 54.97
-PWM Channel : 8, programmed Period (us): 111111.11, actual : 111110, programmed DutyCycle : 60.00, actual : 60.01
-PWM Channel : 9, programmed Period (us): 100000.00, actual : 100003, programmed DutyCycle : 65.00, actual : 64.99
-PWM Channel : 10, programmed Period (us): 66666.66, actual : 66674, programmed DutyCycle : 70.00, actual : 69.99
-PWM Channel : 11, programmed Period (us): 50000.00, actual : 50002, programmed DutyCycle : 75.00, actual : 75.02
-PWM Channel : 12, programmed Period (us): 40000.00, actual : 40028, programmed DutyCycle : 80.00, actual : 79.92
-PWM Channel : 13, programmed Period (us): 33333.33, actual : 33336, programmed DutyCycle : 85.00, actual : 84.95
-PWM Channel : 14, programmed Period (us): 25000.00, actual : 25015, programmed DutyCycle : 90.00, actual : 89.80
-PWM Channel : 15, programmed Period (us): 20000.00, actual : 20016, programmed DutyCycle : 95.00, actual : 94.98
-SimpleTimer (ms): 2000, us : 22506218, Dus : 9647927
-PWM Channel : 0, programmed Period (us): 1000000.00, actual : 1000019, programmed DutyCycle : 5.00, actual : 5.00
-PWM Channel : 1, programmed Period (us): 500000.00, actual : 500010, programmed DutyCycle : 10.00, actual : 10.00
-PWM Channel : 2, programmed Period (us): 333333.34, actual : 333333, programmed DutyCycle : 20.00, actual : 20.00
-PWM Channel : 3, programmed Period (us): 250000.00, actual : 250006, programmed DutyCycle : 30.00, actual : 30.00
-PWM Channel : 4, programmed Period (us): 200000.00, actual : 200004, programmed DutyCycle : 40.00, actual : 39.99
-PWM Channel : 5, programmed Period (us): 166666.67, actual : 166677, programmed DutyCycle : 45.00, actual : 44.99
-PWM Channel : 6, programmed Period (us): 142857.14, actual : 142863, programmed DutyCycle : 50.00, actual : 49.99
-PWM Channel : 7, programmed Period (us): 125000.00, actual : 125013, programmed DutyCycle : 55.00, actual : 54.98
-PWM Channel : 8, programmed Period (us): 111111.11, actual : 111111, programmed DutyCycle : 60.00, actual : 59.99
-PWM Channel : 9, programmed Period (us): 100000.00, actual : 100002, programmed DutyCycle : 65.00, actual : 65.00
-PWM Channel : 10, programmed Period (us): 66666.66, actual : 66691, programmed DutyCycle : 70.00, actual : 69.97
-PWM Channel : 11, programmed Period (us): 50000.00, actual : 50001, programmed DutyCycle : 75.00, actual : 74.97
-PWM Channel : 12, programmed Period (us): 40000.00, actual : 40025, programmed DutyCycle : 80.00, actual : 79.93
-PWM Channel : 13, programmed Period (us): 33333.33, actual : 33354, programmed DutyCycle : 85.00, actual : 84.99
-PWM Channel : 14, programmed Period (us): 25000.00, actual : 25012, programmed DutyCycle : 90.00, actual : 89.96
-PWM Channel : 15, programmed Period (us): 20000.00, actual : 20009, programmed DutyCycle : 95.00, actual : 94.98
+PWM Channel : 1, programmed Period (us): 500000.00, actual : 500000, programmed DutyCycle : 10.00, actual : 10.00
+PWM Channel : 2, programmed Period (us): 333333.34, actual : 333341, programmed DutyCycle : 20.00, actual : 20.00
+PWM Channel : 3, programmed Period (us): 250000.00, actual : 249999, programmed DutyCycle : 30.00, actual : 30.00
+PWM Channel : 4, programmed Period (us): 200000.00, actual : 200000, programmed DutyCycle : 40.00, actual : 40.00
+PWM Channel : 5, programmed Period (us): 166666.67, actual : 166679, programmed DutyCycle : 45.00, actual : 44.99
+PWM Channel : 6, programmed Period (us): 142857.14, actual : 142860, programmed DutyCycle : 50.00, actual : 49.99
+PWM Channel : 7, programmed Period (us): 125000.00, actual : 125000, programmed DutyCycle : 55.00, actual : 54.99
+PWM Channel : 8, programmed Period (us): 111111.11, actual : 111120, programmed DutyCycle : 60.00, actual : 59.99
+PWM Channel : 9, programmed Period (us): 100000.00, actual : 100014, programmed DutyCycle : 65.00, actual : 64.99
+PWM Channel : 10, programmed Period (us): 66666.66, actual : 66681, programmed DutyCycle : 70.00, actual : 69.97
+PWM Channel : 11, programmed Period (us): 50000.00, actual : 50028, programmed DutyCycle : 75.00, actual : 74.94
+PWM Channel : 12, programmed Period (us): 40000.00, actual : 40000, programmed DutyCycle : 80.00, actual : 79.97
+PWM Channel : 13, programmed Period (us): 33333.33, actual : 33343, programmed DutyCycle : 85.00, actual : 84.94
+PWM Channel : 14, programmed Period (us): 25000.00, actual : 25021, programmed DutyCycle : 90.00, actual : 89.90
+PWM Channel : 15, programmed Period (us): 20000.00, actual : 20003, programmed DutyCycle : 95.00, actual : 94.94
 ```
 
 ---
@@ -362,7 +377,7 @@ The following is the sample terminal output when running example [**ISR_16_PWMs_
 
 ```
 Starting ISR_16_PWMs_Array on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.2.1
+MBED_RP2040_Slow_PWM v1.3.0
 [PWM] _timerNo =  0 , Clock (Hz) =  1000000.00 , _fre (Hz) =  50000.00
 [PWM] _count =  0 - 20
 [PWM] hardware_alarm_set_target, uS =  20
@@ -393,7 +408,7 @@ The following is the sample terminal output when running example [**ISR_16_PWMs_
 
 ```
 Starting ISR_16_PWMs_Array_Simple on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.2.1
+MBED_RP2040_Slow_PWM v1.3.0
 [PWM] _timerNo =  0 , Clock (Hz) =  1000000.00 , _fre (Hz) =  50000.00
 [PWM] _count =  0 - 20
 [PWM] hardware_alarm_set_target, uS =  20
@@ -424,7 +439,7 @@ The following is the sample terminal output when running example [ISR_Modify_PWM
 
 ```
 Starting ISR_Modify_PWM on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.2.1
+MBED_RP2040_Slow_PWM v1.3.0
 [PWM] _timerNo =  0 , Clock (Hz) =  1000000.00 , _fre (Hz) =  50000.00
 [PWM] _count =  0 - 20
 [PWM] hardware_alarm_set_target, uS =  20
@@ -446,7 +461,7 @@ The following is the sample terminal output when running example [ISR_Changing_P
 
 ```
 Starting ISR_Changing_PWM on RaspberryPi Pico
-MBED_RP2040_Slow_PWM v1.2.1
+MBED_RP2040_Slow_PWM v1.3.0
 [PWM] _timerNo =  0 , Clock (Hz) =  1000000.00 , _fre (Hz) =  50000.00
 [PWM] _count =  0 - 20
 [PWM] hardware_alarm_set_target, uS =  20
@@ -504,15 +519,15 @@ Submit issues to: [MBED_RP2040_Slow_PWM issues](https://github.com/khoih-prog/MB
 
 ## DONE
 
-1. Basic hardware multi-channel PWM for **RP2040-based RaspberryPi Pico, Nano_RP2040_Connect, etc.**
-2. Add Table of Contents
-3. Add functions to modify PWM settings on-the-fly
-4. Improve accuracy by using `float`, instead of `uint32_t` for `dutycycle`
-5. Optimize library code by using `reference-passing` instead of `value-passing`
-6. DutyCycle to be optionally updated at the end current PWM period instead of immediately.
-7. Fix `multiple-definitions` linker error. Drop `src_cpp` and `src_h` directories
-8. Display informational warning only when `_PWM_LOGLEVEL_` > 3
-
+ 1. Basic hardware multi-channel PWM for **RP2040-based RaspberryPi Pico, Nano_RP2040_Connect, etc.**
+ 2. Add Table of Contents
+ 3. Add functions to modify PWM settings on-the-fly
+ 4. Improve accuracy by using `float`, instead of `uint32_t` for `dutycycle`
+ 5. Optimize library code by using `reference-passing` instead of `value-passing`
+ 6. DutyCycle to be optionally updated at the end current PWM period instead of immediately.
+ 7. Fix `multiple-definitions` linker error. Drop `src_cpp` and `src_h` directories
+ 8. Display informational warning only when `_PWM_LOGLEVEL_` > 3
+ 9. Fix `poor-timer-accuracy` bug
 
 ---
 ---
@@ -521,6 +536,13 @@ Submit issues to: [MBED_RP2040_Slow_PWM issues](https://github.com/khoih-prog/MB
 
 Many thanks for everyone for bug reporting, new feature suggesting, testing and contributing to the development of this library.
 
+1. [Neil Baylis](https://github.com/pixpop) to report relating issue [Poor accuracy on timer interrupt frequency or interval. #4](https://github.com/khoih-prog/MBED_RPI_PICO_TimerInterrupt/issues/4), leading to version v1.3.0 to fix `poor-timer-accuracy` bug
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/pixpop"><img src="https://github.com/pixpop.png" width="100px;" alt="pixpop"/><br /><sub><b>Neil Baylis</b></sub></a><br /></td>
+  </tr> 
+</table>
 
 ---
 
@@ -536,7 +558,7 @@ If you want to contribute to this project:
 
 ### License
 
-- The library is licensed under [MIT](https://github.com/khoih-prog/MBED_RP2040_Slow_PWM/blob/master/LICENSE)
+- The library is licensed under [MIT](https://github.com/khoih-prog/MBED_RP2040_Slow_PWM/blob/main/LICENSE)
 
 ---
 

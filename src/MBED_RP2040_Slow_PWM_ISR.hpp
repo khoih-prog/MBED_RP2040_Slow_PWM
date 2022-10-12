@@ -12,7 +12,7 @@
   Therefore, their executions are not blocked by bad-behaving functions / tasks.
   This important feature is absolutely necessary for mission-critical tasks.
 
-  Version: 1.2.1
+  Version: 1.3.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -21,12 +21,15 @@
   1.1.0   K Hoang      10/11/2021 Add functions to modify PWM settings on-the-fly
   1.2.0   K Hoang      02/02/2022 Fix multiple-definitions linker error. Improve accuracy. Optimize code
   1.2.1   K Hoang      03/03/2022 Fix `DutyCycle` and `New Period` display bugs. Display warning only when debug level > 3
+  1.3.0   K.Hoang      12/10/2022 Fix poor timer accuracy bug
 *****************************************************************************************************************************/
 
 #pragma once
 
 #ifndef MBED_RP2040_SLOW_PWM_ISR_HPP
 #define MBED_RP2040_SLOW_PWM_ISR_HPP
+
+////////////////////////////////////////////
 
 #if ( defined(ARDUINO_NANO_RP2040_CONNECT) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || \
       defined(ARDUINO_GENERIC_RP2040) ) && defined(ARDUINO_ARCH_MBED)
@@ -39,15 +42,19 @@
   #error This code is intended to run on the MBED RASPBERRY_PI_PICO platform! Please check your Tools->Board setting.
 #endif
 
+////////////////////////////////////////////
+
 #ifndef MBED_RP2040_SLOW_PWM_VERSION
-  #define MBED_RP2040_SLOW_PWM_VERSION           "MBED_RP2040_Slow_PWM v1.2.1"
+  #define MBED_RP2040_SLOW_PWM_VERSION           "MBED_RP2040_Slow_PWM v1.3.0"
   
   #define MBED_RP2040_SLOW_PWM_VERSION_MAJOR     1
-  #define MBED_RP2040_SLOW_PWM_VERSION_MINOR     2
-  #define MBED_RP2040_SLOW_PWM_VERSION_PATCH     1
+  #define MBED_RP2040_SLOW_PWM_VERSION_MINOR     3
+  #define MBED_RP2040_SLOW_PWM_VERSION_PATCH     0
 
-  #define MBED_RP2040_SLOW_PWM_VERSION_INT       1002001
+  #define MBED_RP2040_SLOW_PWM_VERSION_INT       1003000
 #endif
+
+////////////////////////////////////////////
 
 #if defined(ARDUINO)
   #if ARDUINO >= 100
@@ -56,6 +63,8 @@
     #include <WProgram.h>
   #endif
 #endif
+
+////////////////////////////////////////////
 
 #ifndef _PWM_LOGLEVEL_
   #define _PWM_LOGLEVEL_       1
@@ -75,10 +84,14 @@
   #endif
 #endif
 
+////////////////////////////////////////////
+
 #define MBED_RP2040_Slow_PWM_ISR  MBED_RP2040_Slow_PWM
 
 typedef void (*timer_callback)();
 typedef void (*timer_callback_p)(void *);
+
+////////////////////////////////////////////
 
 #if !defined(USING_MICROS_RESOLUTION)
 
@@ -88,6 +101,8 @@ typedef void (*timer_callback_p)(void *);
     
   #define USING_MICROS_RESOLUTION       false
 #endif
+
+////////////////////////////////////////////
 
 #if !defined(CHANGING_PWM_END_OF_CYCLE)
   #if (_PWM_LOGLEVEL_ > 3)
@@ -213,6 +228,8 @@ class MBED_RP2040_Slow_PWM_ISR
     // returns the number of used PWM channels
     int8_t getnumChannels();
 
+    ////////////////////////////////////////////
+
     // returns the number of available PWM channels
     uint8_t getNumAvailablePWMChannels() 
     {
@@ -221,6 +238,8 @@ class MBED_RP2040_Slow_PWM_ISR
       else 
         return MAX_NUMBER_CHANNELS - numChannels;
     };
+
+    ////////////////////////////////////////////
 
   private:
 
@@ -235,9 +254,6 @@ class MBED_RP2040_Slow_PWM_ISR
 
     typedef struct 
     {
-      ///////////////////////////////////
-      
-      
       ///////////////////////////////////
       
       uint64_t      prevTime;           // value returned by the micros() or millis() function in the previous run() call
@@ -260,6 +276,8 @@ class MBED_RP2040_Slow_PWM_ISR
       uint32_t      newOnTime;          // onTime value, ( period * dutyCycle / 100 ) us  / ms
       float         newDutyCycle;       // from 0.00 to 100.00, float precision
     } PWM_t;
+
+    ////////////////////////////////////////////
 
     volatile PWM_t PWM[MAX_NUMBER_CHANNELS];
 
