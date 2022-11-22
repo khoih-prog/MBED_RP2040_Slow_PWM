@@ -32,8 +32,8 @@
 ////////////////////////////////////////////
 
 void TIMER_ISR_START(uint alarm_num)
-{  
-  absAlarmTime[alarm_num]._private_us_since_boot = time_us_64() + _timerCount[alarm_num];                
+{
+  absAlarmTime[alarm_num]._private_us_since_boot = time_us_64() + _timerCount[alarm_num];
   hardware_alarm_set_target(alarm_num, absAlarmTime[alarm_num]);
 }
 

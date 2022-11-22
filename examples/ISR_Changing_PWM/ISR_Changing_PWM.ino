@@ -15,7 +15,7 @@
 
 #if ! ( ( defined(ARDUINO_NANO_RP2040_CONNECT) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || \
       defined(ARDUINO_GENERIC_RP2040) ) && defined(ARDUINO_ARCH_MBED) )
-  #error This code is intended to run on the MBED RP2040 mbed_nano or mbed_rp2040 platform! Please check your Tools->Board setting.
+#error This code is intended to run on the MBED RP2040 mbed_nano or mbed_rp2040 platform! Please check your Tools->Board setting.
 #endif
 
 // These define's must be placed at the beginning before #include "ESP32_PWM.h"
@@ -64,7 +64,7 @@ void TimerHandler(uint alarm_num)
   // Always call this for MBED RP2040 before processing ISR
   TIMER_ISR_START(alarm_num);
   ///////////////////////////////////////////////////////////
-  
+
   ISR_PWM.run();
 
   ////////////////////////////////////////////////////////////
@@ -105,18 +105,21 @@ int channelNum;
 void setup()
 {
   Serial.begin(115200);
+
   while (!Serial);
 
   delay(2000);
 
-  Serial.print(F("\nStarting ISR_Changing_PWM on ")); Serial.println(BOARD_NAME);
+  Serial.print(F("\nStarting ISR_Changing_PWM on "));
+  Serial.println(BOARD_NAME);
   Serial.println(MBED_RP2040_SLOW_PWM_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
   {
     startMicros = micros();
-    Serial.print(F("Starting ITimer OK, micros() = ")); Serial.println(startMicros);
+    Serial.print(F("Starting ITimer OK, micros() = "));
+    Serial.println(startMicros);
   }
   else
     Serial.println(F("Can't set ITimer. Select another freq. or timer"));
@@ -129,7 +132,10 @@ void setup()
 
 void loop()
 {
-  Serial.print(F("Using PWM Freq = ")); Serial.print(PWM_Freq1); Serial.print(F(", PWM DutyCycle = ")); Serial.println(PWM_DutyCycle1);
+  Serial.print(F("Using PWM Freq = "));
+  Serial.print(PWM_Freq1);
+  Serial.print(F(", PWM DutyCycle = "));
+  Serial.println(PWM_DutyCycle1);
 
 #if USING_PWM_FREQUENCY
 
@@ -150,7 +156,10 @@ void loop()
 
   ISR_PWM.deleteChannel((unsigned) channelNum);
 
-  Serial.print(F("Using PWM Freq = ")); Serial.print(PWM_Freq2); Serial.print(F(", PWM DutyCycle = ")); Serial.println(PWM_DutyCycle2);
+  Serial.print(F("Using PWM Freq = "));
+  Serial.print(PWM_Freq2);
+  Serial.print(F(", PWM DutyCycle = "));
+  Serial.println(PWM_DutyCycle2);
 
 #if USING_PWM_FREQUENCY
 
